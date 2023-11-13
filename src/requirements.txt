@@ -1,0 +1,5 @@
+import_ipynb==0.1.4
+pandas==1.3.4
+Requests==2.31.0
+SQLAlchemy==1.4.22
+psycopg2
