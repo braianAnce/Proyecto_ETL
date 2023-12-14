@@ -1,12 +1,29 @@
 
-# Documentacion
+ El presente proyecto implementa un proceso ETL, extrayendo datos desde una API pública, realizacion transformaciones por medio de notebooks utilizando el lenguaje de programación Python 3, y cargando la información procesada a una base de datos relacional en la nube de AIVEN, que provee su infraestructura de forma gratuita.
 
-El presente proyecto implementa un proceso ETL, extrayendo datos desde una API pública, realizacion transformaciones por medio de notebooks utilizando el lenguaje de programación Python 3, y cargando la información procesada a una base de datos relacional en la nube de AIVEN, que provee su infraestructura de forma gratuita.
+ El proyecto tiene como objetivo obtener un registro histórico de la Intensidad de Carbono en Gran Bretaña, a traves de una ingesta del  día de la fecha en el que es ejecutado el script a 14 días previos (que es lo que permite la API). Para ello se hace uso de:
+
+  API URL : https://api.carbonintensity.org.uk/
+  API Endpoints:
+    - intensity: corresponde a la Intensidad de Carbono a nivel nacional.
+    - Factors: Corresponde a la emision de carbono por cada tipo de combustible que se emite al ambiente.
+    - regional: Corresponde a la intensidad de Carbono, que combustibles lo emite, por cada región de Gran Bretaña. Recibe como parámetros las fechas de interés, y genera nuevos registros cada 30 minutos.
 
 
+ La ejecución del proceso ETL es llevada a cabo a traves de 5 archivos .ipynb que cumplen distintas tareas:
 
+ 1) main.ipynb: Sus tareas fundamentales es la instalacion de las librerias necesarias por medio del archivo requirements.txt, y la coordinación de ejecución de los restantes archivos .ipynb
 
+ 2) funciones.ipynb: Posee las funciones que se reutilizarán a lo largo del proyecto.
 
+ 3) almacenamiento.ipynb: Extrae datos de una API pública, realiza tareas de transformación lo más mínimo posible con el propósito de guardarlos en formato .csv, y que luego serán la fuente de datos del procedimiento principal.
 
- En proceso de construccion.
- 
+ 4) tablas.ipynb: Su tarea es crear las tablas en la base de datos relacional. Para ello se hace uso de credenciales de la base de datos que permanecen ocultas en un archivo config.ini
+
+ 5) procesoETL.ipynb: Archivo que contiene el procedimiento principal.
+    Extraccion: Extrae los datos de los archivos .csv previamente guardados.
+    Transformacion: Se hace uso de la libreria Pandas y el lenguaje de programación Python para realizar las transformaciones, incluye cambio de tipo de datos, edición y creación de DataFrames, relaciones, entre otras.
+    Carga: Se realiza la carga de los DataFrames ya procesados a la base de datos relacional, haciendo uso de las credenciales en el archivo config.ini, por medio del método .to_sql de la libreria Pandas.
+           Aclaración: Por cuestiones de limitación de recursos en la nube gratuita, se realiza un proceso de truncado, es decir, eliminación de información al ingresar nueva, pese a que idea princiapl es crear un historial completo.
+
+ Por último, se da a conocer la existencia del archivo validaciones.ipynb, pero su ejecución no es de relevancia en el procedimiento ETL debido a que es un archivo para realizar consultas SQL y validar que la información ha sido correctamente cargada.
